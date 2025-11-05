@@ -1,0 +1,42 @@
+version: '3.8'
+services:
+  auth-service:
+    build: .
+    container_name: auth-service
+    ports:
+      - "4001:4001"
+    env_file:
+      - .env
+    depends_on:
+      - mongo
+      - redis
+    command: npm run start
+    networks:
+      - app-network
+
+  mongo:
+    image: mongo
+    container_name: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mongo-data:
+  redis-data:
