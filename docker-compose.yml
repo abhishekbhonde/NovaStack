@@ -1,0 +1,110 @@
+version: "3.9"
+
+services:
+  # ===================== #
+  # 🚪 API Gateway
+  # ===================== #
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./api-gateway/.env
+    depends_on:
+      - auth-service
+      - user-service
+      - notification-service
+      - redis
+    networks:
+      - novanet
+
+  # ===================== #
+  # 🔐 Auth Service
+  # ===================== #
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    ports:
+      - "4001:4001"
+    env_file:
+      - ./auth-service/.env
+    depends_on:
+      - mongo
+      - redis
+    networks:
+      - novanet
+
+  # ===================== #
+  # 👤 User Service
+  # ===================== #
+  user-service:
+    build: ./user-service
+    container_name: user-service
+    ports:
+      - "4002:4002"
+    env_file:
+      - ./user-service/.env
+    depends_on:
+      - mongo
+      - redis
+      - auth-service
+    networks:
+      - novanet
+
+  # ===================== #
+  # 📩 Notification Service
+  # ===================== #
+  notification-service:
+    build: ./notification-service
+    container_name: notification-service
+    ports:
+      - "4003:4003"
+    env_file:
+      - ./notification-service/.env
+    depends_on:
+      - redis
+    networks:
+      - novanet
+
+  # ===================== #
+  # 🧠 MongoDB
+  # ===================== #
+  mongo:
+    image: mongo
+    container_name: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - novanet
+
+  # ===================== #
+  # 🔴 Redis
+  # ===================== #
+  redis:
+    image: redis
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - novanet
+
+# ===================== #
+# 🌐 Shared Network
+# ===================== #
+networks:
+  novanet:
+    driver: bridge
+
+# ===================== #
+# 💾 Persistent Volumes
+# ===================== #
+volumes:
+  mongo_data:
+  redis_data:
