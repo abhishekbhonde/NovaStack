@@ -1,0 +1,4 @@
+NovaStack is a modular microservice backend platform.
+It has Auth, User, Notification, API Gateway, and NovaAI services.
+It uses Node.js, MongoDB, Redis, Docker, and LangChain for AI features.
+NovaAI service uses LangChain and OpenAI to provide intelligent responses.
